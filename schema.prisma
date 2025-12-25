@@ -1,0 +1,104 @@
+// Definición del esquema usando Prisma ORM
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 1. Modelo de Vendedor (Usuarios)
+model User {
+  id             String   @id @default(cuid())
+  name           String
+  email          String   @unique
+  role           Role     @default(SALES_REP) // MANAGER o SALES_REP
+  
+  // Relaciones
+  weeklyActivities WeeklyActivity[]
+  monthlyResults   MonthlyResult[]
+  deals            Deal[]
+  kpis             GeneralKPI?
+}
+
+// 2. Actividad Semanal
+model WeeklyActivity {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  weekStartDate     DateTime
+  
+  newConversations  Int      @default(0)
+  followUps         Int      @default(0)
+  demosProposed     Int      @default(0)
+  demosHeld         Int      @default(0)
+  quotesSent        Int      @default(0)
+  activeOpportunities Int    @default(0)
+  observations      String?
+  
+  // El % de cumplimiento se puede calcular en el cliente o backend, 
+  // pero podemos guardarlo si queremos historial estático.
+  complianceScore   Float?   
+
+  createdAt         DateTime @default(now())
+}
+
+// 3. Pipeline Comercial
+model Deal {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  
+  clientName        String
+  openingDate       DateTime
+  stage             DealStage // ENUM: PROSPECTING, NEGOTIATION, CLOSED_WON, etc.
+  amount            Decimal
+  probability       Int      // 0-100
+  nextAction        String?
+  nextActionDate    DateTime?
+  weightedValue     Decimal? // Calculado: amount * (probability/100)
+
+  updatedAt         DateTime @updatedAt
+}
+
+// 4. Resultados Mensuales (Financiero)
+model MonthlyResult {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  
+  month             DateTime // Guardamos el primer día del mes
+  salesUSD          Decimal
+  targetUSD         Decimal
+  commission        Decimal
+  proactivityBonus  Decimal
+  weeksKpiOk        Int
+}
+
+// 5. KPIs Generales (Agregados)
+model GeneralKPI {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id])
+  
+  avgConversations  Float
+  avgFollowUps      Float
+  demosPerMonth     Float
+  conversionRate    Float
+  avgTicket         Decimal
+}
+
+enum Role {
+  MANAGER
+  SALES_REP
+}
+
+enum DealStage {
+  DISCOVERY
+  PROPOSAL
+  NEGOTIATION
+  CLOSED_WON
+  CLOSED_LOST
+} 
