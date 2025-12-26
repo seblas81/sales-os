@@ -5,7 +5,7 @@ import { formatCurrency, formatDate } from "@/lib/utils"
 interface Deal {
   id: string
   clientName: string
-  stage: 'DISCOVERY' | 'PROPOSAL' | 'NEGOTIATION' | 'CLOSED_WON'
+  stage: "DISCOVERY" | "PROPOSAL" | "NEGOTIATION" | "CLOSED_WON" | "CLOSED_LOST";
   amount: number
   probability: number
   nextActionDate: string
