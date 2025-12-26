@@ -9,6 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { prisma } from "@/lib/prisma"
+export const dynamic = 'force-dynamic'
 
 export default async function PipelinePage() {
   // Fetch de datos real (Server Side)

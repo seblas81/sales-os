@@ -1,6 +1,7 @@
  
 import KPIGrid from "@/components/KPIGrid"
 import { prisma } from "@/lib/prisma"
+export const dynamic = 'force-dynamic'
 
 // Página Servidor: Fetch de datos directo
 export default async function DashboardPage() {
