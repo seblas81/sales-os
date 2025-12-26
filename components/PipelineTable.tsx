@@ -17,6 +17,7 @@ const stageColors = {
   PROPOSAL: "bg-purple-100 text-purple-700",
   NEGOTIATION: "bg-orange-100 text-orange-700",
   CLOSED_WON: "bg-green-100 text-green-700",
+  CLOSED_LOST: "bg-red-100 text-red-800",
 }
 
 export default function PipelineTable({ deals }: { deals: Deal[] }) {
