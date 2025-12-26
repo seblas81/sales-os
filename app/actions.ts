@@ -2,21 +2,26 @@
 
 import { revalidatePath } from "next/cache"
 
+// Acción para registrar actividad semanal
 export async function logActivity(formData: FormData) {
-  // Obtenemos los datos del formulario
   const rawData = formData.get('data')
+  if (!rawData) return { success: false }
   
-  if (!rawData) {
-    return { success: false, error: "No data received" }
-  }
+  console.log("Actividad recibida:", rawData)
+  await new Promise(resolve => setTimeout(resolve, 500))
+  
+  revalidatePath('/dashboard')
+  return { success: true }
+}
 
-  // Aquí imprimimos en la consola del servidor para verificar que llega
-  console.log("Datos recibidos en el servidor:", rawData)
+// Acción para crear un nuevo Deal (La que faltaba)
+export async function createDeal(formData: FormData) {
+  const rawData = formData.get('data')
+  if (!rawData) return { success: false }
 
-  // TODO: Aquí conectaremos la base de datos real más adelante.
-  // Por ahora simulamos una espera y devolvemos éxito.
+  console.log("Deal recibido:", rawData)
   await new Promise(resolve => setTimeout(resolve, 500))
 
-  revalidatePath('/dashboard')
+  revalidatePath('/dashboard/pipeline')
   return { success: true }
 }
